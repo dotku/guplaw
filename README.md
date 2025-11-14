@@ -205,8 +205,10 @@ GPULaw is fully integrated with **OpenAI's GPT-4** to provide real-time legal as
 ### Features
 - **Real-time Case Analysis**: Submit legal cases and receive instant AI-powered analysis
 - **Interactive Chat**: Have conversations with Richard Law AI about legal questions
+- **Markdown Support**: AI responses formatted with rich text including headers, lists, tables, code blocks, and more
 - **Practice Area Coverage**: AI trained on 6 legal practice areas
 - **Attorney Recommendations**: AI automatically recommends attorney consultation for urgent cases
+- **Hydration-Safe**: Client-side rendering prevents React hydration errors
 
 ### API Routes
 - `/api/chat` - Real-time chat with Richard Law AI
@@ -223,6 +225,45 @@ GPULaw is fully integrated with **OpenAI's GPT-4** to provide real-time legal as
    - Attorney recommendation
    - Required documents
    - Timeline expectations
+4. Response rendered with markdown formatting for optimal readability
+
+### Markdown Support
+AI responses support full GitHub Flavored Markdown (GFM) including:
+
+**Text Formatting:**
+- **Bold** and *italic* text
+- `Inline code` for legal citations
+- Blockquotes for emphasis
+
+**Structure:**
+- # Headers (H1, H2, H3)
+- Bulleted and numbered lists
+- Horizontal rules for section breaks
+
+**Advanced:**
+- Tables with borders and header styling
+- Code blocks with syntax highlighting
+- Links with hover effects
+
+**Example AI Response:**
+```markdown
+## Case Analysis
+
+**Category:** Family Law
+**Urgency:** High
+
+### Immediate Actions:
+1. Gather all relevant documents
+2. Document timeline of events
+3. Consult with attorney
+
+### Legal Issues:
+- Child custody determination
+- Asset division
+- Spousal support eligibility
+
+> **Important:** This is general legal information, not legal advice.
+```
 
 ## Future Enhancements
 
