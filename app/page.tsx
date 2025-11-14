@@ -3,6 +3,7 @@ import LegalCategories from '@/components/LegalCategories';
 import HowItWorks from '@/components/HowItWorks';
 import Pricing from '@/components/Pricing';
 import CaseIntakeForm from '@/components/CaseIntakeForm';
+import AIChat from '@/components/AIChat';
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
       <HowItWorks />
       <Pricing />
       <CaseIntakeForm />
+      <AIChat />
       <Footer />
     </main>
   );

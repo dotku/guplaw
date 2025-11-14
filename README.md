@@ -186,22 +186,58 @@ Or connect your GitHub repository to Vercel for automatic deployments.
 Create a `.env.local` file for environment-specific configuration:
 
 ```env
-# Add your environment variables here
-NEXT_PUBLIC_API_URL=your_api_url
+# OpenAI API Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Custom GPT Configuration (optional)
+CUSTOM_GPT_URL=https://chatgpt.com/g/g-your-custom-gpt-id
+
+# Next.js Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+**Important**: Never commit your `.env.local` file to version control. It's already included in `.gitignore`.
+
+## AI Integration
+
+GPULaw is fully integrated with **OpenAI's GPT-4** to provide real-time legal assistance:
+
+### Features
+- **Real-time Case Analysis**: Submit legal cases and receive instant AI-powered analysis
+- **Interactive Chat**: Have conversations with Richard Law AI about legal questions
+- **Practice Area Coverage**: AI trained on 6 legal practice areas
+- **Attorney Recommendations**: AI automatically recommends attorney consultation for urgent cases
+
+### API Routes
+- `/api/chat` - Real-time chat with Richard Law AI
+- `/api/analyze-case` - Comprehensive case analysis endpoint
+
+### How It Works
+1. User submits case through Case Intake Form
+2. API calls OpenAI GPT-4 with specialized legal prompt
+3. AI analyzes case and provides:
+   - Case summary
+   - Key legal issues
+   - Immediate action items
+   - Potential outcomes
+   - Attorney recommendation
+   - Required documents
+   - Timeline expectations
 
 ## Future Enhancements
 
-- [ ] Backend API integration for case submissions
+- [✅] Real-time chat with AI assistant
+- [✅] Backend API integration for case submissions
 - [ ] User authentication and dashboard
 - [ ] Attorney matching algorithm
-- [ ] Real-time chat with AI assistant
 - [ ] Document upload and storage
 - [ ] Payment processing integration
 - [ ] Attorney portal for case management
 - [ ] Advanced legal research tools
 - [ ] Client case tracking
 - [ ] Multilingual support
+- [ ] Email notifications for case updates
+- [ ] PDF generation for case analysis reports
 
 ## Contributing
 
