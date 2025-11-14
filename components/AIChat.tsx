@@ -86,6 +86,11 @@ export default function AIChat() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Generate new suggested questions based on the conversation
+      if (data.suggestedQuestions && Array.isArray(data.suggestedQuestions)) {
+        setSuggestedQuestions(data.suggestedQuestions);
+      }
     } catch (error) {
       console.error('Chat error:', error);
       const errorMessage: Message = {
@@ -99,15 +104,7 @@ export default function AIChat() {
     }
   };
 
-  const quickQuestions = [
-    "How do I file for divorce?",
-    "What are my rights as a tenant?",
-    "How can I dispute a credit card debt?",
-    "What documents do I need for a will?",
-    "How do I fight a traffic ticket?",
-  ];
-
-  const handleQuickQuestion = (question: string) => {
+  const handleSuggestedQuestion = (question: string) => {
     setInput(question);
   };
 
@@ -198,24 +195,22 @@ export default function AIChat() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Questions */}
+          {/* Suggested Questions */}
           <div className="h-[140px] sm:h-[160px] border-t-2 border-gray-200">
-            {messages.length === 1 && (
-              <div className="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-4 bg-blue-50 h-full">
-                <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">Quick questions to get started:</p>
-                <div className="flex flex-wrap gap-2">
-                  {quickQuestions.map((question, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleQuickQuestion(question)}
-                      className="bg-white hover:bg-blue-100 border-2 border-blue-200 text-gray-700 text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all hover:border-blue-400"
-                    >
-                      {question}
-                    </button>
-                  ))}
-                </div>
+            <div className="px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-4 bg-blue-50 h-full overflow-y-auto">
+              <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">Suggested questions:</p>
+              <div className="flex flex-wrap gap-2">
+                {suggestedQuestions.map((question, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSuggestedQuestion(question)}
+                    className="bg-white hover:bg-blue-100 border-2 border-blue-200 text-gray-700 text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all hover:border-blue-400"
+                  >
+                    {question}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
           </div>
 
           {/* Input Form */}
