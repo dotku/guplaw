@@ -28,11 +28,28 @@ export default function AIChat() {
     "What documents do I need for a will?",
     "How do I fight a traffic ticket?",
   ]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
+
+    // Listen for category selection events
+    const handleCategorySelected = () => {
+      const categoryData = sessionStorage.getItem('selectedCategory');
+      if (categoryData) {
+        const { title, questions } = JSON.parse(categoryData);
+        setSelectedCategory(title);
+        setSuggestedQuestions(questions);
+      }
+    };
+
+    window.addEventListener('categorySelected', handleCategorySelected);
+
+    return () => {
+      window.removeEventListener('categorySelected', handleCategorySelected);
+    };
   }, []);
 
   const scrollToBottom = () => {
@@ -116,7 +133,11 @@ export default function AIChat() {
             Chat with Richard Law AI
           </h2>
           <p className="text-lg sm:text-xl text-gray-600">
-            Get instant legal guidance powered by advanced AI
+            {selectedCategory ? (
+              <>Discussing <span className="font-bold text-blue-900">{selectedCategory}</span></>
+            ) : (
+              'Get instant legal guidance powered by advanced AI'
+            )}
           </p>
         </div>
 

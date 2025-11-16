@@ -1,3 +1,5 @@
+'use client';
+
 export default function LegalCategories() {
   const categories = [
     {
@@ -11,6 +13,13 @@ export default function LegalCategories() {
       color: "from-pink-500 to-rose-500",
       bgColor: "bg-pink-50",
       borderColor: "border-pink-200",
+      questions: [
+        "How do I file for divorce?",
+        "What factors determine child custody?",
+        "How is child support calculated?",
+        "What are my rights in a domestic violence case?",
+        "What documents do I need for adoption?",
+      ],
     },
     {
       title: "Consumer & Debt",
@@ -24,6 +33,13 @@ export default function LegalCategories() {
       color: "from-green-500 to-emerald-500",
       bgColor: "bg-green-50",
       borderColor: "border-green-200",
+      questions: [
+        "How can I dispute a credit card debt?",
+        "What are my rights against debt collectors?",
+        "How does bankruptcy work?",
+        "Can I stop a car repossession?",
+        "How do I fix credit reporting errors?",
+      ],
     },
     {
       title: "Housing & Landlord-Tenant",
@@ -36,6 +52,13 @@ export default function LegalCategories() {
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-blue-50",
       borderColor: "border-blue-200",
+      questions: [
+        "What are my rights as a tenant?",
+        "How can I fight an eviction?",
+        "Can my landlord raise my rent?",
+        "How do I get my security deposit back?",
+        "What can I do about unsafe housing?",
+      ],
     },
     {
       title: "Wills, Estates & Probate",
@@ -48,6 +71,13 @@ export default function LegalCategories() {
       color: "from-purple-500 to-indigo-500",
       bgColor: "bg-purple-50",
       borderColor: "border-purple-200",
+      questions: [
+        "What documents do I need for a will?",
+        "How do I set up a trust?",
+        "What is power of attorney?",
+        "How does the probate process work?",
+        "How do I become an executor of an estate?",
+      ],
     },
     {
       title: "Immigration",
@@ -61,6 +91,13 @@ export default function LegalCategories() {
       color: "from-amber-500 to-orange-500",
       bgColor: "bg-amber-50",
       borderColor: "border-amber-200",
+      questions: [
+        "How do I apply for a green card?",
+        "What is the asylum process?",
+        "How can I become a U.S. citizen?",
+        "What can I do if facing deportation?",
+        "How do I get a work visa?",
+      ],
     },
     {
       title: "Traffic Cases",
@@ -74,8 +111,32 @@ export default function LegalCategories() {
       color: "from-red-500 to-pink-500",
       bgColor: "bg-red-50",
       borderColor: "border-red-200",
+      questions: [
+        "How do I fight a traffic ticket?",
+        "What are the penalties for a DUI?",
+        "Can I contest a parking ticket?",
+        "Will a ticket affect my insurance?",
+        "How can I get points removed from my license?",
+      ],
     },
   ];
+
+  const handleCategoryClick = (category: typeof categories[0]) => {
+    // Store selected category in sessionStorage
+    sessionStorage.setItem('selectedCategory', JSON.stringify({
+      title: category.title,
+      questions: category.questions,
+    }));
+
+    // Dispatch custom event to notify AIChat component
+    window.dispatchEvent(new CustomEvent('categorySelected'));
+
+    // Scroll to chat section
+    const chatSection = document.getElementById('chat');
+    if (chatSection) {
+      chatSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <section id="practice-areas" className="py-10 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
@@ -93,6 +154,7 @@ export default function LegalCategories() {
           {categories.map((category, index) => (
             <div
               key={index}
+              onClick={() => handleCategoryClick(category)}
               className={`${category.bgColor} ${category.borderColor} border-2 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer group`}
             >
               <div className={`inline-block p-3 sm:p-4 rounded-lg sm:rounded-xl bg-gradient-to-br ${category.color} text-white mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>

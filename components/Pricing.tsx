@@ -88,7 +88,7 @@ export default function Pricing() {
               key={index}
               className={`relative bg-white rounded-2xl shadow-xl ${
                 plan.popular ? 'border-4 ' + plan.borderColor + ' transform scale-105' : 'border-2 ' + plan.borderColor
-              } overflow-hidden hover:shadow-2xl transition-all duration-300`}
+              } overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col`}
             >
               {/* Popular Badge */}
               {plan.popular && (
@@ -99,7 +99,7 @@ export default function Pricing() {
                 </div>
               )}
 
-              <div className="p-6 sm:p-8">
+              <div className="p-6 sm:p-8 flex flex-col flex-grow">
                 {/* Header */}
                 <div className="mb-6 sm:mb-8">
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
@@ -113,7 +113,7 @@ export default function Pricing() {
                 </div>
 
                 {/* Features */}
-                <div className="mb-6 sm:mb-8">
+                <div className="mb-6 sm:mb-8 flex-grow">
                   <ul className="space-y-4">
                     {plan.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-3">
