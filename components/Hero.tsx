@@ -36,7 +36,7 @@ export default function Hero() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight px-2">
             Legal Protection Powered by AI,
             <br />
-            <span className="text-blue-700">Backed by Real Attorneys</span>
+            <span className="text-blue-700">Backed by Human Attorneys</span>
           </h2>
 
           <p className="text-lg sm:text-xl md:text-2xl text-gray-700 font-medium mb-3 sm:mb-4 max-w-4xl mx-auto px-2">

@@ -1,19 +1,21 @@
 'use client';
 
+import PayPalSubscriptionButton from './PayPalSubscriptionButton';
+
 export default function Pricing() {
   const plans = [
     {
       name: "Basic",
-      price: "$29",
-      period: "/month",
-      description: "Essential AI legal tools for everyday needs",
+      price: "Free",
+      period: "",
+      description: "Pure AI-powered legal assistance",
       features: [
         "Unlimited AI legal consultations",
         "Basic document generation",
         "Legal issue triage",
         "6 practice area coverage",
-        "Email support",
         "Legal knowledge base access",
+        "Limited email support",
       ],
       notIncluded: [
         "Attorney consultations",
@@ -24,12 +26,14 @@ export default function Pricing() {
       popular: false,
       color: "from-gray-600 to-gray-800",
       borderColor: "border-gray-200",
+      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_BASIC || '',
+      paypalButtonColor: 'silver' as const,
     },
     {
       name: "Professional",
-      price: "$99",
+      price: "$59.99",
       period: "/month",
-      description: "AI assistance plus limited attorney access",
+      description: "AI + Attorney combined support",
       features: [
         "Everything in Basic, plus:",
         "2 attorney consultations/month (30 min each)",
@@ -46,12 +50,14 @@ export default function Pricing() {
       popular: true,
       color: "from-blue-600 to-blue-800",
       borderColor: "border-blue-300",
+      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_PROFESSIONAL || '',
+      paypalButtonColor: 'blue' as const,
     },
     {
       name: "Premium",
-      price: "$299",
+      price: "$899.99",
       period: "/month",
-      description: "Full AI + attorney protection for peace of mind",
+      description: "Attorney AI Service customization",
       features: [
         "Everything in Professional, plus:",
         "Unlimited attorney consultations",
@@ -66,6 +72,8 @@ export default function Pricing() {
       popular: false,
       color: "from-amber-600 to-amber-800",
       borderColor: "border-amber-300",
+      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_PREMIUM || '',
+      paypalButtonColor: 'gold' as const,
     },
   ];
 
@@ -137,13 +145,21 @@ export default function Pricing() {
                 </div>
 
                 {/* CTA Button */}
-                <button
-                  className={`w-full py-3 sm:py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r ${plan.color} hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg ${
-                    plan.popular ? 'ring-4 ring-blue-200' : ''
-                  }`}
-                >
-                  {plan.buttonText}
-                </button>
+                {plan.price === "Free" ? (
+                  <a
+                    href="#chat"
+                    className={`w-full py-3 sm:py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r ${plan.color} hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg text-center block`}
+                  >
+                    {plan.buttonText}
+                  </a>
+                ) : (
+                  <PayPalSubscriptionButton
+                    planId={plan.paypalPlanId}
+                    buttonText={plan.buttonText}
+                    planName={plan.name}
+                    color={plan.paypalButtonColor}
+                  />
+                )}
               </div>
             </div>
           ))}

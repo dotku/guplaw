@@ -178,7 +178,7 @@ export default function CaseIntakeForm() {
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Analyzing Your Case...</h3>
                 <p className="text-base sm:text-lg text-gray-600">
-                  Richard Law AI is reviewing your legal issue and preparing comprehensive guidance.
+                  Richard AI legal assistant is reviewing your legal issue and preparing comprehensive guidance.
                 </p>
               </div>
             ) : submitted && analysisResult ? (

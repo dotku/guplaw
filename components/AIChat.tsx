@@ -14,7 +14,7 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hello! I'm Richard Law AI, your legal assistant. I can help you with questions about Family Law, Consumer & Debt, Housing, Wills & Estates, Immigration, and Traffic Cases. How can I assist you today?\n\n*Please note: I provide general legal information, not legal advice. For specific legal matters, you should consult with a licensed attorney.*",
+      content: "Hello! I'm Richard AI legal assistant. I can help you with questions about Family Law, Consumer & Debt, Housing, Wills & Estates, Immigration, and Traffic Cases. How can I assist you today?\n\n*Please note: I provide general legal information, not legal advice. For specific legal matters, you should consult with a licensed attorney.*",
       timestamp: new Date(),
     },
   ]);
@@ -130,7 +130,7 @@ export default function AIChat() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Chat with Richard Law AI
+            Chat with Richard AI legal assistant
           </h2>
           <p className="text-lg sm:text-xl text-gray-600">
             {selectedCategory ? (
@@ -151,10 +151,10 @@ export default function AIChat() {
               </svg>
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-white font-bold text-base sm:text-lg truncate">Richard Law AI</h3>
+              <h3 className="text-white font-bold text-base sm:text-lg truncate">Richard AI legal assistant</h3>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <p className="text-blue-100 text-xs sm:text-sm">Online • Ready to help</p>
+                <p className="text-blue-100 text-xs sm:text-sm">24/7 Online • Ready to help</p>
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function AIChat() {
                       <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
                       </svg>
-                      <span className="text-xs font-semibold text-gray-600">Richard Law AI</span>
+                      <span className="text-xs font-semibold text-gray-600">Richard AI legal assistant</span>
                     </div>
                   )}
 
