@@ -69,12 +69,13 @@ export default function Pricing() {
         "Dedicated support & integration for your firm",
       ],
       notIncluded: [],
-      buttonText: "Get Attorney Elite",
+      buttonText: "Try Attorney Elite",
       popular: false,
-      color: "from-amber-600 to-amber-800",
+      color: "from-amber-600 to-orange-600",
       borderColor: "border-amber-300",
       paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_PREMIUM || '',
       paypalButtonColor: 'gold' as const,
+      limitedTrial: true,
     },
   ];
 
@@ -108,7 +109,19 @@ export default function Pricing() {
                 </div>
               )}
 
-              <div className="p-6 sm:p-8 flex flex-col flex-grow">
+              {/* Limited Trial Badge */}
+              {'limitedTrial' in plan && plan.limitedTrial && (
+                <div className="absolute top-0 left-0">
+                  <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 rounded-br-xl font-bold text-sm shadow-lg flex items-center gap-2">
+                    <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-xl border-4 border-amber-700 shadow-md ring-2 ring-yellow-400">
+                      🎁
+                    </span>
+                    <span>LIMITED TIME FREE TRIAL</span>
+                  </div>
+                </div>
+              )}
+
+              <div className={`p-6 sm:p-8 flex flex-col flex-grow ${'limitedTrial' in plan && plan.limitedTrial ? 'pt-12 sm:pt-14' : ''}`}>
                 {/* Header */}
                 <div className="mb-6 sm:mb-8">
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
@@ -149,6 +162,15 @@ export default function Pricing() {
                 {plan.price === "Free" ? (
                   <a
                     href="#chat"
+                    className={`w-full py-3 sm:py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r ${plan.color} hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg text-center block`}
+                  >
+                    {plan.buttonText}
+                  </a>
+                ) : 'limitedTrial' in plan && plan.limitedTrial ? (
+                  <a
+                    href={process.env.NEXT_PUBLIC_APP_URL_ATTORNEY_SERVICES || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`w-full py-3 sm:py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r ${plan.color} hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg text-center block`}
                   >
                     {plan.buttonText}
