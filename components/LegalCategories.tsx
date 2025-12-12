@@ -100,23 +100,22 @@ export default function LegalCategories() {
       ],
     },
     {
-      title: "Traffic Cases",
+      title: "Crypto Compliance",
       icon: (
         <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
-          <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+          <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
         </svg>
       ),
-      description: "Parking and traffic tickets, DUIs",
+      description: "Cryptocurrency regulations, exchange compliance, ICO legal opinions, AML/KYC requirements, token classification",
       color: "from-red-500 to-pink-500",
       bgColor: "bg-red-50",
       borderColor: "border-red-200",
       questions: [
-        "How do I fight a traffic ticket?",
-        "What are the penalties for a DUI?",
-        "Can I contest a parking ticket?",
-        "Will a ticket affect my insurance?",
-        "How can I get points removed from my license?",
+        "What are the legal requirements for a crypto exchange?",
+        "How do I ensure AML/KYC compliance?",
+        "What regulations apply to my ICO or token sale?",
+        "How should my cryptocurrency be classified?",
+        "What licenses do I need to operate a crypto business?",
       ],
     },
   ];

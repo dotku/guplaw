@@ -26,7 +26,7 @@ GPULaw integrates AI-driven self-service legal guidance (such as document prepar
 3. **Housing & Landlord-Tenant** - Evictions, rent disputes, security deposits, housing conditions
 4. **Wills, Estates & Probate** - Wills, trusts, power of attorney, estate administration
 5. **Immigration** - Green cards, asylum, citizenship, deportation defense, work visas
-6. **Traffic Cases** - Parking tickets, traffic violations, DUIs
+6. **Crypto Compliance** - Cryptocurrency regulations, exchange compliance, ICO legal opinions, AML/KYC requirements, token classification, licensing
 
 ## Tech Stack
 

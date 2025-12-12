@@ -14,7 +14,7 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hello! I'm Richard AI legal assistant. I can help you with questions about Family Law, Consumer & Debt, Housing, Wills & Estates, Immigration, and Traffic Cases. How can I assist you today?\n\n*Please note: I provide general legal information, not legal advice. For specific legal matters, you should consult with a licensed attorney.*",
+      content: "Hello! I'm Richard AI legal assistant. I can help you with questions about Family Law, Consumer & Debt, Housing, Wills & Estates, Immigration, and Crypto Compliance. How can I assist you today?\n\n*Please note: I provide general legal information, not legal advice. For specific legal matters, you should consult with a licensed attorney.*",
       timestamp: new Date(),
     },
   ]);
@@ -26,7 +26,7 @@ export default function AIChat() {
     "What are my rights as a tenant?",
     "How can I dispute a credit card debt?",
     "What documents do I need for a will?",
-    "How do I fight a traffic ticket?",
+    "What are the legal requirements for a crypto exchange?",
   ]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);

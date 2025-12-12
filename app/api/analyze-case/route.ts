@@ -19,7 +19,7 @@ const CASE_ANALYSIS_PROMPT = `You are Richard AI legal assistant, an expert lega
 
 Provide comprehensive, actionable analysis while maintaining that this is general information, not legal advice.
 
-Practice areas: Family Law, Consumer & Debt, Housing & Landlord-Tenant, Wills/Estates/Probate, Immigration, Traffic Cases`;
+Practice areas: Family Law, Consumer & Debt, Housing & Landlord-Tenant, Wills/Estates/Probate, Immigration, Crypto Compliance`;
 
 export async function POST(request: NextRequest) {
   try {

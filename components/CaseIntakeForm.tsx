@@ -32,7 +32,7 @@ export default function CaseIntakeForm() {
     'Housing & Landlord-Tenant',
     'Wills, Estates & Probate',
     'Immigration',
-    'Traffic Cases',
+    'Crypto Compliance',
     'Other',
   ];
 

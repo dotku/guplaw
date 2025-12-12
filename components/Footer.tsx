@@ -51,7 +51,7 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#practice-areas" className="text-gray-400 hover:text-white transition-colors">
-                  Traffic Cases
+                  Crypto Compliance
                 </a>
               </li>
             </ul>
