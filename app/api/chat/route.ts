@@ -63,8 +63,7 @@ export async function POST(request: NextRequest) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-5',
       messages: messagesWithSystem,
-      temperature: 0.7,
-      max_completion_tokens: 2000,
+      max_completion_tokens: 16000,
     });
 
     const aiResponse = completion.choices[0]?.message?.content || 'I apologize, but I could not generate a response. Please try again.';
@@ -146,7 +145,7 @@ Return ONLY a JSON array of 5 question strings, nothing else. Example format: ["
     }
 
     return NextResponse.json(
-      { error: 'An error occurred while processing your request' },
+      { error: 'An error occurred while processing your request', details: error?.message || String(error) },
       { status: 500 }
     );
   }

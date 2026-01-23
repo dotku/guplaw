@@ -62,8 +62,7 @@ Format your response in clear sections with bullet points where appropriate.
         { role: 'system', content: CASE_ANALYSIS_PROMPT },
         { role: 'user', content: analysisRequest },
       ],
-      temperature: 0.7,
-      max_completion_tokens: 2500,
+      max_completion_tokens: 16000,
     });
 
     const analysis = completion.choices[0]?.message?.content || 'Unable to generate analysis.';
