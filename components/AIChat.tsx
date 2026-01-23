@@ -30,7 +30,18 @@ export default function AIChat() {
     "What are the legal requirements for a crypto exchange?",
   ]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [thinkingText, setThinkingText] = useState('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const thinkingIndexRef = useRef(0);
+
+  const THINKING_MESSAGES = [
+    'Analyzing your legal question...',
+    'Reviewing relevant statutes...',
+    'Examining case precedents...',
+    'Evaluating applicable regulations...',
+    'Identifying key legal issues...',
+    'Formulating legal guidance...',
+  ];
 
   useEffect(() => {
     setIsMounted(true);
@@ -59,6 +70,21 @@ export default function AIChat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Cycle through thinking messages during reasoning phase
+  useEffect(() => {
+    if (isLoading && !isStreaming) {
+      thinkingIndexRef.current = 0;
+      setThinkingText(THINKING_MESSAGES[0]);
+      const interval = setInterval(() => {
+        thinkingIndexRef.current = (thinkingIndexRef.current + 1) % THINKING_MESSAGES.length;
+        setThinkingText(THINKING_MESSAGES[thinkingIndexRef.current]);
+      }, 2500);
+      return () => clearInterval(interval);
+    } else {
+      setThinkingText('');
+    }
+  }, [isLoading, isStreaming]);
 
   const fetchSuggestions = async (userContent: string, assistantContent: string) => {
     try {
@@ -214,8 +240,8 @@ export default function AIChat() {
               <h3 className="text-white font-bold text-base sm:text-lg truncate">Richard AI legal assistant</h3>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${isStreaming ? 'bg-yellow-400 animate-pulse' : 'bg-green-400 animate-pulse'}`}></div>
-                <p className="text-blue-100 text-xs sm:text-sm">
-                  {isStreaming ? 'Responding...' : isLoading ? 'Thinking...' : '24/7 Online • Ready to help'}
+                <p className="text-blue-100 text-xs sm:text-sm transition-opacity duration-300">
+                  {isStreaming ? 'Responding...' : isLoading ? thinkingText : '24/7 Online • Ready to help'}
                 </p>
               </div>
             </div>
@@ -270,10 +296,15 @@ export default function AIChat() {
             {isLoading && !isStreaming && messages[messages.length - 1]?.role === 'user' && (
               <div className="flex justify-start">
                 <div className="bg-white border-2 border-gray-200 rounded-2xl px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                    {thinkingText && (
+                      <span className="text-sm text-gray-500 italic">{thinkingText}</span>
+                    )}
                   </div>
                 </div>
               </div>
