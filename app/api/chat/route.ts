@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       model: 'gpt-5',
       messages: messagesWithSystem,
       temperature: 0.7,
-      max_tokens: 2000,
+      max_completion_tokens: 2000,
     });
 
     const aiResponse = completion.choices[0]?.message?.content || 'I apologize, but I could not generate a response. Please try again.';
