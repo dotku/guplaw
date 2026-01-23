@@ -240,8 +240,8 @@ export default function AIChat() {
               <h3 className="text-white font-bold text-base sm:text-lg truncate">Richard AI legal assistant</h3>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${isStreaming ? 'bg-yellow-400 animate-pulse' : 'bg-green-400 animate-pulse'}`}></div>
-                <p className="text-blue-100 text-xs sm:text-sm transition-opacity duration-300">
-                  {isStreaming ? 'Responding...' : isLoading ? thinkingText : '24/7 Online • Ready to help'}
+                <p className="text-blue-100 text-xs sm:text-sm">
+                  {isStreaming || isLoading ? 'Processing...' : '24/7 Online • Ready to help'}
                 </p>
               </div>
             </div>
