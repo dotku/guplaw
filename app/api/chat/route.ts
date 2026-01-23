@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     // Call OpenAI API
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: 'gpt-5',
       messages: messagesWithSystem,
       temperature: 0.7,
       max_tokens: 2000,
@@ -81,7 +81,7 @@ Assistant: ${aiResponse}
 Return ONLY a JSON array of 5 question strings, nothing else. Example format: ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"]`;
 
       const suggestionCompletion = await openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: 'You are a helpful assistant that generates relevant follow-up questions based on legal conversations. Always return valid JSON array format.' },
           { role: 'user', content: suggestionPrompt },

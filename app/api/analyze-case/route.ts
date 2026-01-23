@@ -57,7 +57,7 @@ Format your response in clear sections with bullet points where appropriate.
 `;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: 'gpt-5',
       messages: [
         { role: 'system', content: CASE_ANALYSIS_PROMPT },
         { role: 'user', content: analysisRequest },
