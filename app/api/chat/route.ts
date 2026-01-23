@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -33,24 +32,20 @@ Practice areas you cover:
 
 Remember: You are a helpful AI assistant, not a replacement for a licensed attorney. For complex matters, always recommend connecting with a GPULaw attorney.`;
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { messages, context } = body;
 
     if (!messages || !Array.isArray(messages)) {
-      return NextResponse.json(
-        { error: 'Messages array is required' },
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ error: 'Messages array is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    // Add context to the conversation if provided (e.g., from case intake form)
     const contextMessage = context
-      ? {
-          role: 'system' as const,
-          content: `User context: ${JSON.stringify(context)}`,
-        }
+      ? { role: 'system' as const, content: `User context: ${JSON.stringify(context)}` }
       : null;
 
     const messagesWithSystem = [
@@ -59,94 +54,59 @@ export async function POST(request: NextRequest) {
       ...messages,
     ];
 
-    // Call OpenAI API
-    const completion = await openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       model: 'gpt-5',
       messages: messagesWithSystem,
       max_completion_tokens: 16000,
+      stream: true,
     });
 
-    const aiResponse = completion.choices[0]?.message?.content || 'I apologize, but I could not generate a response. Please try again.';
+    const encoder = new TextEncoder();
 
-    // Generate contextual suggested questions based on the conversation
-    let suggestedQuestions: string[] = [];
-    try {
-      const suggestionPrompt = `Based on the following conversation, generate 5 short, relevant follow-up questions that the user might want to ask next. The questions should be contextually relevant to the conversation and help the user explore related legal topics or next steps.
-
-Conversation:
-User: ${messages[messages.length - 1]?.content || ''}
-Assistant: ${aiResponse}
-
-Return ONLY a JSON array of 5 question strings, nothing else. Example format: ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"]`;
-
-      const suggestionCompletion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant that generates relevant follow-up questions based on legal conversations. Always return valid JSON array format.' },
-          { role: 'user', content: suggestionPrompt },
-        ],
-        temperature: 0.8,
-        max_tokens: 300,
-      });
-
-      const suggestionsText = suggestionCompletion.choices[0]?.message?.content || '[]';
-
-      // Parse the JSON response
-      try {
-        const parsed = JSON.parse(suggestionsText);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          suggestedQuestions = parsed.slice(0, 5);
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content;
+            if (content) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
+            }
+          }
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        } catch (error) {
+          controller.error(error);
         }
-      } catch (parseError) {
-        console.error('Failed to parse suggested questions:', parseError);
-        // Fallback to default questions
-        suggestedQuestions = [
-          "What are my next steps?",
-          "Do I need to consult an attorney?",
-          "What documents should I prepare?",
-          "What is the typical timeline?",
-          "What are the potential costs?",
-        ];
-      }
-    } catch (suggestionError) {
-      console.error('Error generating suggestions:', suggestionError);
-      // Fallback to default questions
-      suggestedQuestions = [
-        "What are my next steps?",
-        "Do I need to consult an attorney?",
-        "What documents should I prepare?",
-        "What is the typical timeline?",
-        "What are the potential costs?",
-      ];
-    }
-
-    return NextResponse.json({
-      response: aiResponse,
-      suggestedQuestions,
-      usage: completion.usage,
+      },
     });
 
+    return new Response(readableStream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
   } catch (error: any) {
-    console.error('OpenAI API error:', error);
+    console.error('Chat API error:', error);
 
-    // Handle specific error types
     if (error?.status === 401) {
-      return NextResponse.json(
-        { error: 'Invalid API key' },
-        { status: 401 }
-      );
+      return new Response(JSON.stringify({ error: 'Invalid API key' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     if (error?.status === 429) {
-      return NextResponse.json(
-        { error: 'Rate limit exceeded. Please try again later.' },
-        { status: 429 }
-      );
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    return NextResponse.json(
-      { error: 'An error occurred while processing your request', details: error?.message || String(error) },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: 'An error occurred', details: error?.message || String(error) }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

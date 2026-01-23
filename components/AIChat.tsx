@@ -19,7 +19,8 @@ export default function AIChat() {
     },
   ]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([
     "How do I file for divorce?",
@@ -30,12 +31,10 @@ export default function AIChat() {
   ]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
 
-    // Listen for category selection events
     const handleCategorySelected = () => {
       const categoryData = sessionStorage.getItem('selectedCategory');
       if (categoryData) {
@@ -46,7 +45,6 @@ export default function AIChat() {
     };
 
     window.addEventListener('categorySelected', handleCategorySelected);
-
     return () => {
       window.removeEventListener('categorySelected', handleCategorySelected);
     };
@@ -62,9 +60,28 @@ export default function AIChat() {
     scrollToBottom();
   }, [messages]);
 
+  const fetchSuggestions = async (userContent: string, assistantContent: string) => {
+    try {
+      const res = await fetch('/api/suggestions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userMessage: userContent,
+          assistantMessage: assistantContent,
+        }),
+      });
+      const data = await res.json();
+      if (data.questions && Array.isArray(data.questions)) {
+        setSuggestedQuestions(data.questions);
+      }
+    } catch {
+      // Keep existing suggestions on error
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || loading) return;
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       role: 'user',
@@ -72,21 +89,20 @@ export default function AIChat() {
       timestamp: new Date(),
     };
 
+    const currentInput = input;
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: messages.map((m) => ({
             role: m.role,
             content: m.content,
-          })).concat([{ role: 'user', content: input }]),
+          })).concat([{ role: 'user', content: currentInput }]),
         }),
       });
 
@@ -94,20 +110,55 @@ export default function AIChat() {
         throw new Error('Failed to get response');
       }
 
-      const data = await response.json();
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('No response body');
 
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+
+      // Add empty assistant message that we'll stream into
       const assistantMessage: Message = {
         role: 'assistant',
-        content: data.response,
+        content: '',
         timestamp: new Date(),
       };
-
       setMessages((prev) => [...prev, assistantMessage]);
+      setIsStreaming(true);
 
-      // Generate new suggested questions based on the conversation
-      if (data.suggestedQuestions && Array.isArray(data.suggestedQuestions)) {
-        setSuggestedQuestions(data.suggestedQuestions);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const text = decoder.decode(value, { stream: true });
+        const lines = text.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                assistantContent += parsed.content;
+                setMessages((prev) => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = {
+                    ...updated[updated.length - 1],
+                    content: assistantContent,
+                  };
+                  return updated;
+                });
+              }
+            } catch {
+              // Skip malformed chunks
+            }
+          }
+        }
       }
+
+      // Fetch suggested questions after stream completes
+      fetchSuggestions(currentInput, assistantContent);
     } catch (error) {
       console.error('Chat error:', error);
       const errorMessage: Message = {
@@ -115,9 +166,18 @@ export default function AIChat() {
         content: 'I apologize, but I encountered an error. Please try again or contact support if the issue persists.',
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => {
+        // Replace empty streaming message or append
+        if (prev[prev.length - 1]?.role === 'assistant' && prev[prev.length - 1]?.content === '') {
+          const updated = [...prev];
+          updated[updated.length - 1] = errorMessage;
+          return updated;
+        }
+        return [...prev, errorMessage];
+      });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+      setIsStreaming(false);
     }
   };
 
@@ -153,8 +213,10 @@ export default function AIChat() {
             <div className="min-w-0 flex-1">
               <h3 className="text-white font-bold text-base sm:text-lg truncate">Richard AI legal assistant</h3>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <p className="text-blue-100 text-xs sm:text-sm">24/7 Online • Ready to help</p>
+                <div className={`w-2 h-2 rounded-full ${isStreaming ? 'bg-yellow-400 animate-pulse' : 'bg-green-400 animate-pulse'}`}></div>
+                <p className="text-blue-100 text-xs sm:text-sm">
+                  {isStreaming ? 'Responding...' : isLoading ? 'Thinking...' : '24/7 Online • Ready to help'}
+                </p>
               </div>
             </div>
           </div>
@@ -184,9 +246,13 @@ export default function AIChat() {
 
                   {message.role === 'assistant' ? (
                     <div className="prose prose-sm max-w-none leading-relaxed">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {message.content}
-                      </ReactMarkdown>
+                      {message.content ? (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {message.content}
+                        </ReactMarkdown>
+                      ) : isStreaming ? (
+                        <span className="inline-block w-2 h-4 bg-blue-600 animate-pulse"></span>
+                      ) : null}
                     </div>
                   ) : (
                     <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
@@ -201,7 +267,7 @@ export default function AIChat() {
               </div>
             ))}
 
-            {loading && (
+            {isLoading && !isStreaming && messages[messages.length - 1]?.role === 'user' && (
               <div className="flex justify-start">
                 <div className="bg-white border-2 border-gray-200 rounded-2xl px-6 py-4">
                   <div className="flex items-center gap-2">
@@ -212,8 +278,6 @@ export default function AIChat() {
                 </div>
               </div>
             )}
-
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Suggested Questions */}
@@ -242,12 +306,12 @@ export default function AIChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your legal question..."
-                disabled={loading}
+                disabled={isLoading}
                 className="flex-1 px-3 py-3 sm:px-4 sm:py-3 md:px-6 md:py-4 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 outline-none transition-all disabled:bg-gray-100 text-sm sm:text-base"
               />
               <button
                 type="submit"
-                disabled={loading || !input.trim()}
+                disabled={isLoading || !input.trim()}
                 className="bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-950 hover:to-blue-800 text-white font-bold px-4 sm:px-6 md:px-8 py-3 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 sm:gap-2 flex-shrink-0"
               >
                 <span className="hidden sm:inline">Send</span>
