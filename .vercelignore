@@ -1,0 +1,6 @@
+# The /api directory contains an older Python serverless function
+# implementation that is not wired into the Next.js App Router app
+# (which handles all endpoints at /app/api/*). Excluding it here so
+# Vercel does not try to build or deploy the Python runtime.
+/api/
+/requirements.txt
