@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
@@ -25,34 +27,34 @@ export default function Footer() {
             <h4 className="text-lg font-bold mb-4">Practice Areas</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#practice-areas" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/family-law" className="text-gray-400 hover:text-white transition-colors">
                   Family Law
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#practice-areas" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/consumer-debt" className="text-gray-400 hover:text-white transition-colors">
                   Consumer & Debt
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#practice-areas" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/housing" className="text-gray-400 hover:text-white transition-colors">
                   Housing & Landlord-Tenant
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#practice-areas" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/wills-estates" className="text-gray-400 hover:text-white transition-colors">
                   Wills, Estates & Probate
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#practice-areas" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/immigration" className="text-gray-400 hover:text-white transition-colors">
                   Immigration
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#practice-areas" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/crypto-compliance" className="text-gray-400 hover:text-white transition-colors">
                   Crypto Compliance
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

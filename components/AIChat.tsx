@@ -10,11 +10,32 @@ interface Message {
   timestamp: Date;
 }
 
-export default function AIChat() {
+interface AIChatProps {
+  initialCategory?: string;
+  initialQuestions?: string[];
+  initialGreeting?: string;
+}
+
+const DEFAULT_GREETING =
+  "Hello! I'm Richard AI legal assistant. I can help you with questions about Family Law, Consumer & Debt, Housing, Wills & Estates, Immigration, and Crypto Compliance. How can I assist you today?\n\n*Please note: I provide general legal information, not legal advice. For specific legal matters, you should consult with a licensed attorney.*";
+
+const DEFAULT_QUESTIONS = [
+  "How do I file for divorce?",
+  "What are my rights as a tenant?",
+  "How can I dispute a credit card debt?",
+  "What documents do I need for a will?",
+  "What are the legal requirements for a crypto exchange?",
+];
+
+export default function AIChat({
+  initialCategory = '',
+  initialQuestions,
+  initialGreeting,
+}: AIChatProps = {}) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hello! I'm Richard AI legal assistant. I can help you with questions about Family Law, Consumer & Debt, Housing, Wills & Estates, Immigration, and Crypto Compliance. How can I assist you today?\n\n*Please note: I provide general legal information, not legal advice. For specific legal matters, you should consult with a licensed attorney.*",
+      content: initialGreeting ?? DEFAULT_GREETING,
       timestamp: new Date(),
     },
   ]);
@@ -22,14 +43,10 @@ export default function AIChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([
-    "How do I file for divorce?",
-    "What are my rights as a tenant?",
-    "How can I dispute a credit card debt?",
-    "What documents do I need for a will?",
-    "What are the legal requirements for a crypto exchange?",
-  ]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>(
+    initialQuestions ?? DEFAULT_QUESTIONS,
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [thinkingText, setThinkingText] = useState('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const thinkingIndexRef = useRef(0);

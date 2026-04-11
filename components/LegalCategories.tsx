@@ -1,142 +1,7 @@
-'use client';
+import Link from 'next/link';
+import { practiceAreas } from '@/lib/practiceAreas';
 
 export default function LegalCategories() {
-  const categories = [
-    {
-      title: "Family Law",
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-        </svg>
-      ),
-      description: "Divorce, child custody, child support, alimony, adoption, and domestic violence protection",
-      color: "from-pink-500 to-rose-500",
-      bgColor: "bg-pink-50",
-      borderColor: "border-pink-200",
-      questions: [
-        "How do I file for divorce?",
-        "What factors determine child custody?",
-        "How is child support calculated?",
-        "What are my rights in a domestic violence case?",
-        "What documents do I need for adoption?",
-      ],
-    },
-    {
-      title: "Consumer & Debt",
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
-          <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd"/>
-        </svg>
-      ),
-      description: "Credit card debt collection, car repossession, payday loans, bankruptcy, credit reporting errors, and identity theft",
-      color: "from-green-500 to-emerald-500",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200",
-      questions: [
-        "How can I dispute a credit card debt?",
-        "What are my rights against debt collectors?",
-        "How does bankruptcy work?",
-        "Can I stop a car repossession?",
-        "How do I fix credit reporting errors?",
-      ],
-    },
-    {
-      title: "Housing & Landlord-Tenant",
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-        </svg>
-      ),
-      description: "Evictions, rent increases, security deposit disputes, unsafe housing conditions",
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      questions: [
-        "What are my rights as a tenant?",
-        "How can I fight an eviction?",
-        "Can my landlord raise my rent?",
-        "How do I get my security deposit back?",
-        "What can I do about unsafe housing?",
-      ],
-    },
-    {
-      title: "Wills, Estates & Probate",
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd"/>
-        </svg>
-      ),
-      description: "Writing wills, setting up trusts, power of attorney, and estate administration after death",
-      color: "from-purple-500 to-indigo-500",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      questions: [
-        "What documents do I need for a will?",
-        "How do I set up a trust?",
-        "What is power of attorney?",
-        "How does the probate process work?",
-        "How do I become an executor of an estate?",
-      ],
-    },
-    {
-      title: "Immigration",
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd"/>
-          <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
-        </svg>
-      ),
-      description: "Green card applications, asylum, citizenship (naturalization), deportation defense, and work visas",
-      color: "from-amber-500 to-orange-500",
-      bgColor: "bg-amber-50",
-      borderColor: "border-amber-200",
-      questions: [
-        "How do I apply for a green card?",
-        "What is the asylum process?",
-        "How can I become a U.S. citizen?",
-        "What can I do if facing deportation?",
-        "How do I get a work visa?",
-      ],
-    },
-    {
-      title: "Crypto Compliance",
-      icon: (
-        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-        </svg>
-      ),
-      description: "Cryptocurrency regulations, exchange compliance, ICO legal opinions, AML/KYC requirements, token classification",
-      color: "from-red-500 to-pink-500",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200",
-      questions: [
-        "What are the legal requirements for a crypto exchange?",
-        "How do I ensure AML/KYC compliance?",
-        "What regulations apply to my ICO or token sale?",
-        "How should my cryptocurrency be classified?",
-        "What licenses do I need to operate a crypto business?",
-      ],
-    },
-  ];
-
-  const handleCategoryClick = (category: typeof categories[0]) => {
-    // Store selected category in sessionStorage
-    sessionStorage.setItem('selectedCategory', JSON.stringify({
-      title: category.title,
-      questions: category.questions,
-    }));
-
-    // Dispatch custom event to notify AIChat component
-    window.dispatchEvent(new CustomEvent('categorySelected'));
-
-    // Scroll to chat section
-    const chatSection = document.getElementById('chat');
-    if (chatSection) {
-      chatSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
     <section id="practice-areas" className="py-10 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
@@ -150,11 +15,11 @@ export default function LegalCategories() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {categories.map((category, index) => (
-            <div
-              key={index}
-              onClick={() => handleCategoryClick(category)}
-              className={`${category.bgColor} ${category.borderColor} border-2 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer group`}
+          {practiceAreas.map((category) => (
+            <Link
+              key={category.slug}
+              href={`/${category.slug}`}
+              className={`${category.bgColor} ${category.borderColor} border-2 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer group block`}
             >
               <div className={`inline-block p-3 sm:p-4 rounded-lg sm:rounded-xl bg-gradient-to-br ${category.color} text-white mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12">
@@ -167,10 +32,10 @@ export default function LegalCategories() {
               </h3>
 
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                {category.description}
+                {category.shortDescription}
               </p>
 
-              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-gray-200">
+              <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-gray-200 flex items-center justify-between">
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -186,8 +51,14 @@ export default function LegalCategories() {
                     <span className="font-semibold">Attorney</span>
                   </div>
                 </div>
+                <span className="text-blue-700 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Learn more
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

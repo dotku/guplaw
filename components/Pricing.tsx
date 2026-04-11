@@ -2,80 +2,117 @@
 
 import PayPalSubscriptionButton from './PayPalSubscriptionButton';
 
+type PlanKind = 'paypal' | 'contact' | 'signup';
+
+interface Plan {
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  audience: string;
+  features: string[];
+  buttonText: string;
+  popular: boolean;
+  color: string;
+  borderColor: string;
+  kind: PlanKind;
+  paypalPlanId?: string;
+  paypalButtonColor?: 'silver' | 'blue' | 'gold';
+  href?: string;
+}
+
+const SUPPORT_EMAIL = 'support@gpulaw.com';
+
 export default function Pricing() {
-  const plans = [
+  const plans: Plan[] = [
     {
-      name: "Basic",
-      price: "Free",
-      period: "",
-      description: "Pure AI-powered legal assistance",
+      name: 'Free',
+      price: '$0',
+      period: '/month',
+      description: 'Try AI legal assistance at no cost',
+      audience: 'For getting started',
       features: [
-        "Unlimited AI legal consultations",
-        "Basic document generation",
-        "Legal issue triage",
-        "6 practice area coverage",
-        "Legal knowledge base access",
-        "Limited email support",
+        '10 AI legal questions / month',
+        'Basic document templates',
+        '6 practice area coverage',
+        'Legal knowledge base access',
+        '1 active case in your dashboard',
+        'Community support',
       ],
-      notIncluded: [
-        "Attorney consultations",
-        "Document review by attorney",
-        "Court representation",
-      ],
-      buttonText: "Start Basic",
+      buttonText: 'Sign Up Free',
       popular: false,
-      color: "from-gray-600 to-gray-800",
-      borderColor: "border-gray-200",
-      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_BASIC || '',
-      paypalButtonColor: 'silver' as const,
+      color: 'from-gray-600 to-gray-800',
+      borderColor: 'border-gray-200',
+      kind: 'signup',
+      href: '/auth/login?screen_hint=signup',
     },
     {
-      name: "Professional",
-      price: "$59.99",
-      period: "/month",
-      description: "AI + Attorney combined support",
+      name: 'User',
+      price: '$19',
+      period: '/month',
+      description: 'AI legal assistance for individuals and families',
+      audience: 'For individuals',
       features: [
-        "Everything in Basic, plus:",
-        "2 attorney consultations/month (30 min each)",
-        "Attorney document review (up to 5 pages)",
-        "Advanced AI document generation",
-        "Priority email & chat support",
-        "Discount on additional attorney hours",
+        'Unlimited AI legal consultations',
+        'Full AI document generation & templates',
+        'Unlimited cases in your dashboard',
+        '1 attorney consultation / month (30 min)',
+        'Attorney document review (up to 5 pages)',
+        'Discounted rates for extra attorney time',
+        'Priority email support',
       ],
-      notIncluded: [
-        "Unlimited attorney consultations",
-        "Court representation",
-      ],
-      buttonText: "Get Professional",
+      buttonText: 'Get Started',
       popular: true,
-      color: "from-blue-600 to-blue-800",
-      borderColor: "border-blue-300",
-      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_PROFESSIONAL || '',
-      paypalButtonColor: 'blue' as const,
+      color: 'from-blue-600 to-blue-800',
+      borderColor: 'border-blue-300',
+      kind: 'paypal',
+      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_USER || '',
+      paypalButtonColor: 'blue',
     },
     {
-      name: "Attorney Elite",
-      price: "$1,299",
-      period: "/month",
-      description: "Precision AI tools for legal research, analysis & drafting",
+      name: 'Attorney',
+      price: '$299',
+      period: '/month',
+      description: 'Precision AI tools for practicing attorneys',
+      audience: 'For solo & small-firm attorneys',
       features: [
-        "AI legal research (laws, regulations, case law)",
-        "Document review (emails, contracts, evidence, files)",
-        "Precision legal drafting (briefs, motions, complaints)",
-        "Contract generation & review automation",
-        "Case law analysis & legal application",
-        "Document editing & revision tools",
-        "Intelligent case indexing & search",
-        "Dedicated support & integration for your firm",
+        'AI legal research (laws, regulations, case law)',
+        'Document review & precision drafting',
+        'Contract generation & review automation',
+        'Case law analysis & application',
+        'Intelligent case indexing & search',
+        'Listing on the GPULaw attorney marketplace',
+        'Priority support',
       ],
-      notIncluded: [],
-      buttonText: "Try Attorney Elite",
+      buttonText: 'Get Attorney Plan',
       popular: false,
-      color: "from-amber-600 to-orange-600",
-      borderColor: "border-amber-300",
-      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_PREMIUM || '',
-      paypalButtonColor: 'gold' as const,
-      limitedTrial: true,
+      color: 'from-amber-600 to-orange-600',
+      borderColor: 'border-amber-300',
+      kind: 'paypal',
+      paypalPlanId: process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_ATTORNEY || '',
+      paypalButtonColor: 'gold',
+    },
+    {
+      name: 'Enterprise',
+      price: 'Custom',
+      period: '',
+      description: 'Tailored for firms, in-house teams, and organizations',
+      audience: 'For firms & organizations',
+      features: [
+        'Custom attorney & user seats',
+        'SSO, SCIM & advanced security',
+        'Dedicated customer success manager',
+        'Custom integrations & APIs',
+        'SLA & compliance support',
+        'Volume pricing & custom billing',
+        'Onboarding & team training',
+      ],
+      buttonText: 'Contact Support',
+      popular: false,
+      color: 'from-gray-700 to-gray-900',
+      borderColor: 'border-gray-300',
+      kind: 'contact',
+      href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('GPULaw Enterprise Plan Inquiry')}`,
     },
   ];
 
@@ -92,12 +129,12 @@ export default function Pricing() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8 mb-10 sm:mb-12">
           {plans.map((plan, index) => (
             <div
               key={index}
               className={`relative bg-white rounded-2xl shadow-xl ${
-                plan.popular ? 'border-4 ' + plan.borderColor + ' transform scale-105' : 'border-2 ' + plan.borderColor
+                plan.popular ? 'border-4 ' + plan.borderColor + ' xl:transform xl:scale-105' : 'border-2 ' + plan.borderColor
               } overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col`}
             >
               {/* Popular Badge */}
@@ -109,28 +146,21 @@ export default function Pricing() {
                 </div>
               )}
 
-              {/* Limited Trial Badge */}
-              {'limitedTrial' in plan && plan.limitedTrial && (
-                <div className="absolute top-0 left-0">
-                  <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 rounded-br-xl font-bold text-sm shadow-lg flex items-center gap-2">
-                    <span className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-xl border-4 border-amber-700 shadow-md ring-2 ring-yellow-400">
-                      🎁
-                    </span>
-                    <span>LIMITED TIME FREE TRIAL</span>
-                  </div>
-                </div>
-              )}
-
-              <div className={`p-6 sm:p-8 flex flex-col flex-grow ${'limitedTrial' in plan && plan.limitedTrial ? 'pt-12 sm:pt-14' : ''}`}>
+              <div className="p-6 sm:p-8 flex flex-col flex-grow">
                 {/* Header */}
                 <div className="mb-6 sm:mb-8">
+                  <p className={`text-xs font-bold uppercase tracking-wider mb-2 bg-gradient-to-r ${plan.color} bg-clip-text text-transparent`}>
+                    {plan.audience}
+                  </p>
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                   <p className="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6">{plan.description}</p>
                   <div className="flex items-baseline">
                     <span className={`text-4xl sm:text-5xl font-extrabold bg-gradient-to-r ${plan.color} bg-clip-text text-transparent`}>
                       {plan.price}
                     </span>
-                    <span className="text-gray-600 ml-2 text-sm sm:text-base">{plan.period}</span>
+                    {plan.period && (
+                      <span className="text-gray-600 ml-2 text-sm sm:text-base">{plan.period}</span>
+                    )}
                   </div>
                 </div>
 
@@ -142,46 +172,27 @@ export default function Pricing() {
                         <svg className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                         </svg>
-                        <span className={`text-gray-700 ${feature.includes('Everything') ? 'font-semibold' : ''}`}>
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                    {plan.notIncluded.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3 opacity-50">
-                        <svg className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
-                        </svg>
-                        <span className="text-gray-400 line-through">{feature}</span>
+                        <span className="text-gray-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 {/* CTA Button */}
-                {plan.price === "Free" ? (
-                  <a
-                    href="#chat"
-                    className={`w-full py-3 sm:py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r ${plan.color} hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg text-center block`}
-                  >
-                    {plan.buttonText}
-                  </a>
-                ) : 'limitedTrial' in plan && plan.limitedTrial ? (
-                  <a
-                    href={process.env.NEXT_PUBLIC_APP_URL_ATTORNEY_SERVICES || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-full py-3 sm:py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r ${plan.color} hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg text-center block`}
-                  >
-                    {plan.buttonText}
-                  </a>
-                ) : (
+                {plan.kind === 'paypal' ? (
                   <PayPalSubscriptionButton
-                    planId={plan.paypalPlanId}
+                    planId={plan.paypalPlanId ?? ''}
                     buttonText={plan.buttonText}
                     planName={plan.name}
-                    color={plan.paypalButtonColor}
+                    color={plan.paypalButtonColor ?? 'blue'}
                   />
+                ) : (
+                  <a
+                    href={plan.href}
+                    className={`w-full py-3 sm:py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r ${plan.color} hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg text-base sm:text-lg text-center block`}
+                  >
+                    {plan.buttonText}
+                  </a>
                 )}
               </div>
             </div>

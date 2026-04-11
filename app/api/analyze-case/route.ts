@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { getCurrentUser } from '@/lib/authUser';
+import { db } from '@/lib/db';
+import { cases, urgencyEnum } from '@/lib/schema';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+type Urgency = (typeof urgencyEnum.enumValues)[number];
+
+function normalizeUrgency(value: unknown): Urgency {
+  if (
+    value === 'low' ||
+    value === 'medium' ||
+    value === 'high' ||
+    value === 'critical'
+  ) {
+    return value;
+  }
+  return 'low';
+}
 
 // System prompt for case analysis
 const CASE_ANALYSIS_PROMPT = `You are Richard AI legal assistant, an expert legal case analyzer for GPULaw. Your task is to analyze legal cases and provide:
@@ -69,6 +86,33 @@ Format your response in clear sections with bullet points where appropriate.
 
     // Determine if attorney is needed based on urgency and complexity
     const needsAttorney = urgency === 'high' || urgency === 'critical';
+    const normalizedUrgency = normalizeUrgency(urgency);
+
+    // Persist the case when the user is signed in so it shows up in their dashboard.
+    let savedCaseId: string | null = null;
+    try {
+      const currentUser = await getCurrentUser();
+      if (currentUser) {
+        const [saved] = await db
+          .insert(cases)
+          .values({
+            userId: currentUser.id,
+            clientName: name || currentUser.name || 'Unknown',
+            clientEmail: email || currentUser.email || null,
+            clientPhone: phone || null,
+            category,
+            urgency: normalizedUrgency,
+            description,
+            analysis,
+            needsAttorney,
+          })
+          .returning({ id: cases.id });
+        savedCaseId = saved?.id ?? null;
+      }
+    } catch (persistError) {
+      console.error('Failed to persist case:', persistError);
+      // Non-fatal: still return the analysis to the caller.
+    }
 
     return NextResponse.json({
       analysis,
@@ -80,6 +124,7 @@ Format your response in clear sections with bullet points where appropriate.
         email,
         phone,
       },
+      caseId: savedCaseId,
       timestamp: new Date().toISOString(),
     });
 
