@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { chatCreate, SUGGESTIONS_MODEL, SUGGESTIONS_FALLBACK_MODEL } from '@/lib/ai';
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,15 +17,15 @@ Assistant: ${assistantMessage}
 
 Return ONLY a JSON array of 5 question strings, nothing else. Example format: ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"]`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const completion = await chatCreate({
+      model: SUGGESTIONS_MODEL,
       messages: [
         { role: 'system', content: 'You are a helpful assistant that generates relevant follow-up questions based on legal conversations. Always return valid JSON array format.' },
         { role: 'user', content: suggestionPrompt },
       ],
       temperature: 0.8,
       max_tokens: 300,
-    });
+    }, SUGGESTIONS_FALLBACK_MODEL);
 
     const text = completion.choices[0]?.message?.content || '[]';
 

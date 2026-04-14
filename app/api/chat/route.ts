@@ -1,8 +1,4 @@
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { chatCreate, CHAT_MODEL } from '@/lib/ai';
 
 // System prompt for Richard AI legal assistant
 const SYSTEM_PROMPT = `You are Richard AI legal assistant, an expert legal assistant integrated into the GPULaw platform. You provide helpful, accurate legal information while maintaining important disclaimers.
@@ -54,8 +50,8 @@ export async function POST(request: Request) {
       ...messages,
     ];
 
-    const stream = await openai.chat.completions.create({
-      model: 'gpt-5',
+    const stream = await chatCreate({
+      model: CHAT_MODEL,
       messages: messagesWithSystem,
       max_completion_tokens: 16000,
       stream: true,

@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { chatCreate, CHAT_MODEL } from '@/lib/ai';
 import { getCurrentUser } from '@/lib/authUser';
 import { db } from '@/lib/db';
 import { cases, urgencyEnum } from '@/lib/schema';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 type Urgency = (typeof urgencyEnum.enumValues)[number];
 
@@ -73,8 +69,8 @@ Provide a comprehensive legal analysis including:
 Format your response in clear sections with bullet points where appropriate.
 `;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-5',
+    const completion = await chatCreate({
+      model: CHAT_MODEL,
       messages: [
         { role: 'system', content: CASE_ANALYSIS_PROMPT },
         { role: 'user', content: analysisRequest },

@@ -1,10 +1,8 @@
-import OpenAI from 'openai';
 import { and, asc, eq } from 'drizzle-orm';
+import { chatCreate, CHAT_MODEL } from '@/lib/ai';
 import { getCurrentUser } from '@/lib/authUser';
 import { db } from '@/lib/db';
 import { conversations, messages } from '@/lib/schema';
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const SYSTEM_PROMPT = `You are Richard AI legal assistant, an expert legal assistant integrated into the GPULaw platform. You provide helpful, accurate legal information while maintaining important disclaimers.
 
@@ -107,8 +105,8 @@ export async function POST(request: Request) {
   ];
 
   try {
-    const stream = await openai.chat.completions.create({
-      model: 'gpt-5',
+    const stream = await chatCreate({
+      model: CHAT_MODEL,
       messages: chatMessages,
       max_completion_tokens: 16000,
       stream: true,
