@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { chatCreate, CHAT_MODEL } from '@/lib/ai';
+import { chatCreate, CHAT_MODEL, logAiUsage } from '@/lib/ai';
 import { getCurrentUser } from '@/lib/authUser';
 import { db } from '@/lib/db';
 import { cases, urgencyEnum } from '@/lib/schema';
@@ -69,6 +69,7 @@ Provide a comprehensive legal analysis including:
 Format your response in clear sections with bullet points where appropriate.
 `;
 
+    const startTime = Date.now();
     const completion = await chatCreate({
       model: CHAT_MODEL,
       messages: [
@@ -79,6 +80,18 @@ Format your response in clear sections with bullet points where appropriate.
     });
 
     const analysis = completion.choices[0]?.message?.content || 'Unable to generate analysis.';
+
+    // Non-streaming response includes actual token counts from OpenRouter.
+    const currentUser = await getCurrentUser().catch(() => null);
+    logAiUsage({
+      userId: currentUser?.id,
+      endpoint: '/api/analyze-case',
+      model: completion.model ?? CHAT_MODEL,
+      promptTokens: completion.usage?.prompt_tokens,
+      completionTokens: completion.usage?.completion_tokens,
+      totalTokens: completion.usage?.total_tokens,
+      durationMs: Date.now() - startTime,
+    });
 
     // Determine if attorney is needed based on urgency and complexity
     const needsAttorney = urgency === 'high' || urgency === 'critical';

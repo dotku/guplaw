@@ -6,6 +6,8 @@ import type {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionCreateParamsStreaming,
 } from 'openai/resources/chat/completions';
+import { db } from './db';
+import { aiUsageLogs } from './schema';
 
 // OpenRouter exposes an OpenAI-compatible API. We reuse the `openai` SDK
 // and just swap the base URL + API key.
@@ -83,4 +85,51 @@ export function chatCreate(
   return openai.chat.completions.create(
     withRouting as ChatCompletionCreateParamsStreaming,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Usage logging
+// ---------------------------------------------------------------------------
+
+export interface LogUsageOptions {
+  userId?: string | null;
+  endpoint: string;
+  model: string;
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+  cost?: number;
+  durationMs?: number;
+  success?: boolean;
+  errorMessage?: string;
+}
+
+/**
+ * Fire-and-forget: persists an AI usage row. Errors are swallowed so they
+ * never break the request that triggered the log.
+ */
+export function logAiUsage(opts: LogUsageOptions): void {
+  const total =
+    opts.totalTokens ??
+    (opts.promptTokens ?? 0) + (opts.completionTokens ?? 0);
+
+  db.insert(aiUsageLogs)
+    .values({
+      userId: opts.userId ?? null,
+      endpoint: opts.endpoint,
+      model: opts.model,
+      promptTokens: opts.promptTokens ?? 0,
+      completionTokens: opts.completionTokens ?? 0,
+      totalTokens: total,
+      cost: String(opts.cost ?? 0),
+      durationMs: opts.durationMs ?? null,
+      success: opts.success ?? true,
+      errorMessage: opts.errorMessage ?? null,
+    })
+    .catch((err) => console.error('Failed to log AI usage:', err));
+}
+
+/** Rough token estimate from text length (chars / 4). */
+export function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
 }

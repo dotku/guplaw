@@ -14,6 +14,7 @@ export default async function DashboardLayout({
     { href: '/dashboard/chat', label: 'Chat with Richard', icon: 'chat' },
     { href: '/dashboard/cases', label: 'My Cases', icon: 'folder' },
     { href: '/dashboard/cases/new', label: 'Submit a Case', icon: 'plus' },
+    { href: '/dashboard/usage', label: 'AI Usage', icon: 'chart' },
   ];
 
   return (
@@ -103,6 +104,13 @@ function SidebarIcon({ name }: { name: string }) {
             d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
             clipRule="evenodd"
           />
+        </svg>
+      );
+    case 'chart':
+      return (
+        <svg className={common} fill="currentColor" viewBox="0 0 20 20">
+          <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+          <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
         </svg>
       );
     case 'logout':

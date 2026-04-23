@@ -1,4 +1,4 @@
-import { chatCreate, CHAT_MODEL } from '@/lib/ai';
+import { chatCreate, CHAT_MODEL, logAiUsage, estimateTokens } from '@/lib/ai';
 
 // System prompt for Richard AI legal assistant
 const SYSTEM_PROMPT = `You are Richard AI legal assistant, an expert legal assistant integrated into the GPULaw platform. You provide helpful, accurate legal information while maintaining important disclaimers.
@@ -58,19 +58,40 @@ export async function POST(request: Request) {
     });
 
     const encoder = new TextEncoder();
+    const startTime = Date.now();
+    const inputText = messagesWithSystem.map((m) => m.content).join('');
 
     const readableStream = new ReadableStream({
       async start(controller) {
+        let outputText = '';
         try {
           for await (const chunk of stream) {
             const content = chunk.choices[0]?.delta?.content;
             if (content) {
+              outputText += content;
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
             }
           }
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
+
+          logAiUsage({
+            endpoint: '/api/chat',
+            model: CHAT_MODEL,
+            promptTokens: estimateTokens(inputText),
+            completionTokens: estimateTokens(outputText),
+            durationMs: Date.now() - startTime,
+          });
         } catch (error) {
+          logAiUsage({
+            endpoint: '/api/chat',
+            model: CHAT_MODEL,
+            promptTokens: estimateTokens(inputText),
+            completionTokens: estimateTokens(outputText),
+            durationMs: Date.now() - startTime,
+            success: false,
+            errorMessage: String(error),
+          });
           controller.error(error);
         }
       },

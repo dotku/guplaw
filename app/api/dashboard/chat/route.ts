@@ -1,5 +1,5 @@
 import { and, asc, eq } from 'drizzle-orm';
-import { chatCreate, CHAT_MODEL } from '@/lib/ai';
+import { chatCreate, CHAT_MODEL, logAiUsage, estimateTokens } from '@/lib/ai';
 import { getCurrentUser } from '@/lib/authUser';
 import { db } from '@/lib/db';
 import { conversations, messages } from '@/lib/schema';
@@ -114,6 +114,8 @@ export async function POST(request: Request) {
 
     const encoder = new TextEncoder();
     const finalConversationId = conversationId;
+    const startTime = Date.now();
+    const inputText = chatMessages.map((m) => m.content).join('');
 
     const readable = new ReadableStream({
       async start(controller) {
@@ -150,9 +152,28 @@ export async function POST(request: Request) {
               .where(eq(conversations.id, finalConversationId));
           }
 
+          logAiUsage({
+            userId: user.id,
+            endpoint: '/api/dashboard/chat',
+            model: CHAT_MODEL,
+            promptTokens: estimateTokens(inputText),
+            completionTokens: estimateTokens(assistantContent),
+            durationMs: Date.now() - startTime,
+          });
+
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (err) {
+          logAiUsage({
+            userId: user.id,
+            endpoint: '/api/dashboard/chat',
+            model: CHAT_MODEL,
+            promptTokens: estimateTokens(inputText),
+            completionTokens: estimateTokens(assistantContent),
+            durationMs: Date.now() - startTime,
+            success: false,
+            errorMessage: String(err),
+          });
           controller.error(err);
         }
       },

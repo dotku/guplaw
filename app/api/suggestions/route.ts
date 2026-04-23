@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { chatCreate, SUGGESTIONS_MODEL, SUGGESTIONS_FALLBACK_MODEL } from '@/lib/ai';
+import { chatCreate, SUGGESTIONS_MODEL, SUGGESTIONS_FALLBACK_MODEL, logAiUsage } from '@/lib/ai';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +17,7 @@ Assistant: ${assistantMessage}
 
 Return ONLY a JSON array of 5 question strings, nothing else. Example format: ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"]`;
 
+    const startTime = Date.now();
     const completion = await chatCreate({
       model: SUGGESTIONS_MODEL,
       messages: [
@@ -26,6 +27,15 @@ Return ONLY a JSON array of 5 question strings, nothing else. Example format: ["
       temperature: 0.8,
       max_tokens: 300,
     }, SUGGESTIONS_FALLBACK_MODEL);
+
+    logAiUsage({
+      endpoint: '/api/suggestions',
+      model: completion.model ?? SUGGESTIONS_MODEL,
+      promptTokens: completion.usage?.prompt_tokens,
+      completionTokens: completion.usage?.completion_tokens,
+      totalTokens: completion.usage?.total_tokens,
+      durationMs: Date.now() - startTime,
+    });
 
     const text = completion.choices[0]?.message?.content || '[]';
 

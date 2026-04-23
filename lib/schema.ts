@@ -1,6 +1,8 @@
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
+  integer,
+  numeric,
   pgEnum,
   pgTable,
   text,
@@ -41,6 +43,7 @@ export const users = pgTable('users', {
 export const usersRelations = relations(users, ({ many }) => ({
   conversations: many(conversations),
   cases: many(cases),
+  aiUsageLogs: many(aiUsageLogs),
 }));
 
 // ---------- Conversations ----------
@@ -109,6 +112,30 @@ export const casesRelations = relations(cases, ({ one }) => ({
   }),
 }));
 
+// ---------- AI Usage Logs ----------
+
+export const aiUsageLogs = pgTable('ai_usage_logs', {
+  id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  endpoint: varchar('endpoint', { length: 100 }).notNull(),
+  model: varchar('model', { length: 100 }).notNull(),
+  promptTokens: integer('prompt_tokens').notNull().default(0),
+  completionTokens: integer('completion_tokens').notNull().default(0),
+  totalTokens: integer('total_tokens').notNull().default(0),
+  cost: numeric('cost', { precision: 10, scale: 6 }).notNull().default('0'),
+  durationMs: integer('duration_ms'),
+  success: boolean('success').notNull().default(true),
+  errorMessage: text('error_message'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const aiUsageLogsRelations = relations(aiUsageLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [aiUsageLogs.userId],
+    references: [users.id],
+  }),
+}));
+
 // ---------- Types ----------
 
 export type User = typeof users.$inferSelect;
@@ -122,3 +149,6 @@ export type NewMessage = typeof messages.$inferInsert;
 
 export type Case = typeof cases.$inferSelect;
 export type NewCase = typeof cases.$inferInsert;
+
+export type AiUsageLog = typeof aiUsageLogs.$inferSelect;
+export type NewAiUsageLog = typeof aiUsageLogs.$inferInsert;
